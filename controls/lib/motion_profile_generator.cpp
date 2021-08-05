@@ -1,0 +1,3 @@
+void MotionProfileGenerator::generateProfile() {
+
+}
