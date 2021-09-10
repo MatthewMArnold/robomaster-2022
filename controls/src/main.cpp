@@ -78,6 +78,9 @@ int main()
     tap::communication::TCPServer::MainServer()->getConnection();
 #endif
 
+    tap::motor::DjiMotor motor1(drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS1, 0, "name1");
+    motor1.setDesiredOutput(10);
+
     while (1)
     {
         // do this as fast as you can
