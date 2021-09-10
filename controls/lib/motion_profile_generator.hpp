@@ -1,1 +1,1 @@
-struct MotionProfileConstraints
+// struct MotionProfileConstraints

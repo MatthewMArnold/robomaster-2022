@@ -1,3 +1,3 @@
-void MotionProfileGenerator::generateProfile() {
+// void MotionProfileGenerator::generateProfile() {
 
-}
+// }
