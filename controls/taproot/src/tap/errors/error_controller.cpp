@@ -31,18 +31,12 @@ namespace errors
 {
 void ErrorController::addToErrorList(const SystemError& error)
 {
-    if (!validateErrorTypeAndLocation(error))
-    {
-        return;
-    }
     // only add error if it is not already added
     // Note that we are okay with comparing raw char pointers because an error generated
     // in our codebase use char pointers located in literals.
     for (SystemError sysErr : errorList)
     {
-        if (sysErr.getErrorType() == error.getErrorType() &&
-            sysErr.getLocation() == error.getLocation() &&
-            sysErr.getDescription() == error.getDescription() &&
+        if (sysErr.getDescription() == error.getDescription() &&
             sysErr.getFilename() == error.getFilename() &&
             sysErr.getLineNumber() == error.getLineNumber())
         {
@@ -56,40 +50,9 @@ void ErrorController::addToErrorList(const SystemError& error)
     errorList.append(error);
 }
 
-void ErrorController::updateLedDisplay()
-{
-    // there are no errors to display, default display
-    if (errorList.getSize() == 0)
-    {
-        displayBinaryNumberViaLeds(0);
-        return;
-    }
-
-    // change error every ERROR_ROTATE_TIME time increment
-    if (prevLedErrorChangeWait.execute())
-    {
-        prevLedErrorChangeWait.restart(ERROR_ROTATE_TIME);
-        currentDisplayIndex = (currentDisplayIndex + 1) % errorList.getSize();
-
-        displayBinaryNumberViaLeds(
-            static_cast<uint8_t>(errorList.get(currentDisplayIndex).getLocation()));
-    }
-}
-
 void ErrorController::init()
 {
     drivers->terminalSerial.addHeader("error", &drivers->errorController);
-}
-
-void ErrorController::displayBinaryNumberViaLeds(uint8_t binaryRep)
-{
-    // Mask number and determine if it is a 0 or a 1
-    // If it is a 1, the LED corresponding will blink
-    for (error_index_t i = 0; i < NUM_LEDS; i++)
-    {
-        bool display = (binaryRep >> i) & 1;
-        drivers->leds.set(static_cast<tap::gpio::Leds::LedPin>(i), display);
-    }
 }
 
 bool ErrorController::removeSystemErrorAtIndex(error_index_t index)
@@ -100,20 +63,12 @@ bool ErrorController::removeSystemErrorAtIndex(error_index_t index)
     }
     if (index == 0)
     {
-        if (currentDisplayIndex != 0)
-        {
-            currentDisplayIndex--;
-        }
         errorList.removeFront();
         return true;
     }
     else if (index == errorList.getSize() - 1)
     {
         errorList.removeBack();
-        if (currentDisplayIndex == index)
-        {
-            currentDisplayIndex = 0;
-        }
         return true;
     }
     error_index_t size = errorList.getSize();
@@ -125,10 +80,6 @@ bool ErrorController::removeSystemErrorAtIndex(error_index_t index)
         {
             errorList.append(se);
         }
-    }
-    if (currentDisplayIndex > index)
-    {
-        currentDisplayIndex = (currentDisplayIndex - 1) % errorList.getSize();
     }
     return true;
 }
@@ -237,17 +188,6 @@ void ErrorController::clearAllTerminalErrors(modm::IOStream& outputStream)
     removeAllSystemErrors();
 }
 
-bool ErrorController::validateErrorTypeAndLocation(const SystemError& error)
-{
-    static constexpr uint8_t locationMask =
-        static_cast<uint8_t>(~(0xffu << SystemError::ERROR_LOCATION_SIZE));
-    static constexpr uint8_t errorTypeMask =
-        static_cast<uint8_t>(~(0xffu << SystemError::ERROR_TYPE_SIZE));
-
-    uint8_t locationMasked = static_cast<uint8_t>(error.getLocation()) & locationMask;
-    uint8_t errorTypeMasked = static_cast<uint8_t>(error.getErrorType()) & errorTypeMask;
-    return locationMasked == error.getLocation() && errorTypeMasked == error.getErrorType();
-}
 }  // namespace errors
 
 }  // namespace tap

@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOI->ODR & mask); }
 	// stop documentation inherited
@@ -165,12 +165,10 @@ public:
 	using BitBang = GpioSignal;
 	/// Connect to Tim8
 	using Ch4 = GpioSignal;
-	/// Connect to Fmc
-	using D26 = GpioSignal;
 	/// Connect to Dcmi
 	using D9 = GpioSignal;
 	/// Connect to I2s2
-	using ExtSd = GpioSignal;
+	using Extsd = GpioSignal;
 	/// Connect to Spi2
 	using Miso = GpioSignal;
 	/// @}
@@ -189,22 +187,16 @@ public:
 			"GpioI2::Ch4 only connects to Tim8!");
 	};
 	template< Peripheral peripheral >
-	struct D26 { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioI2::D26 only connects to Fmc!");
-	};
-	template< Peripheral peripheral >
 	struct D9 { static void connect();
 		static_assert(
 			(peripheral == Peripheral::Dcmi),
 			"GpioI2::D9 only connects to Dcmi!");
 	};
 	template< Peripheral peripheral >
-	struct ExtSd { static void connect();
+	struct Extsd { static void connect();
 		static_assert(
 			(peripheral == Peripheral::I2s2),
-			"GpioI2::ExtSd only connects to I2s2!");
+			"GpioI2::Extsd only connects to I2s2!");
 	};
 	template< Peripheral peripheral >
 	struct Miso { static void connect();
@@ -242,18 +234,6 @@ struct GpioI2::Ch4<Peripheral::Tim8>
 	}
 };
 template<>
-struct GpioI2::D26<Peripheral::Fmc>
-{
-	using Gpio = GpioI2;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::D26;
-	static constexpr int af = 12;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(12);
-	}
-};
-template<>
 struct GpioI2::D9<Peripheral::Dcmi>
 {
 	using Gpio = GpioI2;
@@ -266,10 +246,10 @@ struct GpioI2::D9<Peripheral::Dcmi>
 	}
 };
 template<>
-struct GpioI2::ExtSd<Peripheral::I2s2>
+struct GpioI2::Extsd<Peripheral::I2s2>
 {
 	using Gpio = GpioI2;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::ExtSd;
+	static constexpr Gpio::Signal Signal = Gpio::Signal::Extsd;
 	static constexpr int af = 6;
 	inline static void
 	connect()

@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOE->ODR & mask); }
 	// stop documentation inherited
@@ -163,10 +163,8 @@ public:
 	/// @{
 	/// Connect to any software peripheral
 	using BitBang = GpioSignal;
-	/// Connect to Fmc
+	/// Connect to Fsmc
 	using A19 = GpioSignal;
-	/// Connect to Sai1
-	using SdB = GpioSignal;
 	/// Connect to Sys
 	using Traced0 = GpioSignal;
 	/// @}
@@ -181,14 +179,8 @@ public:
 	template< Peripheral peripheral >
 	struct A19 { static void connect();
 		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioE3::A19 only connects to Fmc!");
-	};
-	template< Peripheral peripheral >
-	struct SdB { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Sai1),
-			"GpioE3::SdB only connects to Sai1!");
+			(peripheral == Peripheral::Fsmc),
+			"GpioE3::A19 only connects to Fsmc!");
 	};
 	template< Peripheral peripheral >
 	struct Traced0 { static void connect();
@@ -214,7 +206,7 @@ struct GpioE3::BitBang<Peripheral::BitBang>
 	inline static void connect() {}
 };
 template<>
-struct GpioE3::A19<Peripheral::Fmc>
+struct GpioE3::A19<Peripheral::Fsmc>
 {
 	using Gpio = GpioE3;
 	static constexpr Gpio::Signal Signal = Gpio::Signal::A19;
@@ -223,18 +215,6 @@ struct GpioE3::A19<Peripheral::Fmc>
 	connect()
 	{
 		setAlternateFunction(12);
-	}
-};
-template<>
-struct GpioE3::SdB<Peripheral::Sai1>
-{
-	using Gpio = GpioE3;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::SdB;
-	static constexpr int af = 6;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(6);
 	}
 };
 template<>

@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOF->ODR & mask); }
 	// stop documentation inherited
@@ -167,12 +167,8 @@ public:
 	using Ch1 = GpioSignal;
 	/// Connect to Adc3
 	using In6 = GpioSignal;
-	/// Connect to Spi5
-	using Miso = GpioSignal;
-	/// Connect to Fmc
+	/// Connect to Fsmc
 	using Niowr = GpioSignal;
-	/// Connect to Sai1
-	using SckB = GpioSignal;
 	/// @}
 #endif
 	/// @cond
@@ -195,22 +191,10 @@ public:
 			"GpioF8::In6 only connects to Adc3!");
 	};
 	template< Peripheral peripheral >
-	struct Miso { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Spi5),
-			"GpioF8::Miso only connects to Spi5!");
-	};
-	template< Peripheral peripheral >
 	struct Niowr { static void connect();
 		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioF8::Niowr only connects to Fmc!");
-	};
-	template< Peripheral peripheral >
-	struct SckB { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Sai1),
-			"GpioF8::SckB only connects to Sai1!");
+			(peripheral == Peripheral::Fsmc),
+			"GpioF8::Niowr only connects to Fsmc!");
 	};
 	/// @endcond
 private:
@@ -258,19 +242,7 @@ template<>
 constexpr int8_t
 GpioF8::AdcChannel<Peripheral::Adc3> = 6;
 template<>
-struct GpioF8::Miso<Peripheral::Spi5>
-{
-	using Gpio = GpioF8;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::Miso;
-	static constexpr int af = 5;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(5);
-	}
-};
-template<>
-struct GpioF8::Niowr<Peripheral::Fmc>
+struct GpioF8::Niowr<Peripheral::Fsmc>
 {
 	using Gpio = GpioF8;
 	static constexpr Gpio::Signal Signal = Gpio::Signal::Niowr;
@@ -279,18 +251,6 @@ struct GpioF8::Niowr<Peripheral::Fmc>
 	connect()
 	{
 		setAlternateFunction(12);
-	}
-};
-template<>
-struct GpioF8::SckB<Peripheral::Sai1>
-{
-	using Gpio = GpioF8;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::SckB;
-	static constexpr int af = 6;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(6);
 	}
 };
 /// @endcond

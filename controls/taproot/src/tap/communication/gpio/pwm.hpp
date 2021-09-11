@@ -38,20 +38,34 @@ namespace gpio
 class Pwm
 {
 public:
+
+    static constexpr uint32_t DEFAULT_TIMER1_FREQUENCY = 2000;
+
+    static constexpr uint32_t DEFAULT_TIMER8_FREQUENCY = 2000;
+
+    static constexpr uint32_t DEFAULT_TIMER4_FREQUENCY = 2000;
+
     Pwm() = default;
     DISALLOW_COPY_AND_ASSIGN(Pwm)
     mockable ~Pwm() = default;
 
-    /**
-     * PWM pins whose name corresponds to the names defined on the
-     * RoboMaster type A board.
-     */
     enum Pin
     {
-        W = 1,
-        X,
-        Y,
-        Z
+        C1,
+        C2,
+        C3,
+        C4,
+        C5,
+        C6,
+        C7,
+        Buzzer,
+    };
+
+    enum Timer
+    {
+        TIMER1,
+        TIMER8,
+        TIMER4,
     };
 
     mockable void init();
@@ -72,6 +86,45 @@ public:
      * @param[in] pin the PWM pin to be set.
      */
     mockable void write(float duty, Pwm::Pin pin);
+
+    /**
+     * Set the frequency of the timer, in Hz. Does nothing if frequency == 0
+     */
+    mockable void setTimerFrequency(Timer timer, uint32_t frequency);
+
+    mockable void pause(Timer timer);
+
+    mockable void start(Timer timer);
+
+private:
+    static constexpr int BUZZER_CHANNEL = 1;
+
+    enum Ch
+    {
+        Ch1 = 1,
+        Ch2 = 2,
+        Ch3 = 3,
+        Ch4 = 4,
+    };
+
+    /**
+     * Overflow as calculated by the modm Timer1 object in its getPeriod function.
+     * This is what the Auto Reload Register is set to and the pwm duty is scaled to
+     * a value between 0 and this value.
+     */
+    uint16_t timer1CalculatedOverflow;
+    /**
+     * Overflow as calculated by the modm Timer8 object in its getPeriod function.
+     * This is what the Auto Reload Register is set to and the pwm duty is scaled to
+     * a value between 0 and this value.
+     */
+    uint16_t timer8CalculatedOverflow;
+    /**
+     * Overflow as calculated by the modm Timer4 object in its getPeriod function.
+     * This is what the Auto Reload Register is set to and the pwm duty is scaled to
+     * a value between 0 and this value.
+     */
+    uint16_t timer4CalculatedOverflow;
 };  // class Pwm
 
 }  // namespace gpio

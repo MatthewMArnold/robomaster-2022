@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOD->ODR & mask); }
 	// stop documentation inherited
@@ -165,9 +165,9 @@ public:
 	using BitBang = GpioSignal;
 	/// Connect to Usart3
 	using Ck = GpioSignal;
-	/// Connect to Fmc
+	/// Connect to Fsmc
 	using D15 = GpioSignal;
-	/// Connect to Fmc
+	/// Connect to Fsmc
 	using Da15 = GpioSignal;
 	/// @}
 #endif
@@ -187,14 +187,14 @@ public:
 	template< Peripheral peripheral >
 	struct D15 { static void connect();
 		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioD10::D15 only connects to Fmc!");
+			(peripheral == Peripheral::Fsmc),
+			"GpioD10::D15 only connects to Fsmc!");
 	};
 	template< Peripheral peripheral >
 	struct Da15 { static void connect();
 		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioD10::Da15 only connects to Fmc!");
+			(peripheral == Peripheral::Fsmc),
+			"GpioD10::Da15 only connects to Fsmc!");
 	};
 	/// @endcond
 private:
@@ -226,7 +226,7 @@ struct GpioD10::Ck<Peripheral::Usart3>
 	}
 };
 template<>
-struct GpioD10::D15<Peripheral::Fmc>
+struct GpioD10::D15<Peripheral::Fsmc>
 {
 	using Gpio = GpioD10;
 	static constexpr Gpio::Signal Signal = Gpio::Signal::D15;
@@ -238,7 +238,7 @@ struct GpioD10::D15<Peripheral::Fmc>
 	}
 };
 template<>
-struct GpioD10::Da15<Peripheral::Fmc>
+struct GpioD10::Da15<Peripheral::Fsmc>
 {
 	using Gpio = GpioD10;
 	static constexpr Gpio::Signal Signal = Gpio::Signal::Da15;

@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOC->ODR & mask); }
 	// stop documentation inherited
@@ -165,10 +165,8 @@ public:
 	using BitBang = GpioSignal;
 	/// Connect to Adc1 or Adc2 or Adc3
 	using In10 = GpioSignal;
-	/// Connect to Fmc
-	using Sdnwe = GpioSignal;
-	/// Connect to UsbOtgHs
-	using UlpiStp = GpioSignal;
+	/// Connect to Usbotghs
+	using Ulpistp = GpioSignal;
 	/// @}
 #endif
 	/// @cond
@@ -187,16 +185,10 @@ public:
 			"GpioC0::In10 only connects to Adc1 or Adc2 or Adc3!");
 	};
 	template< Peripheral peripheral >
-	struct Sdnwe { static void connect();
+	struct Ulpistp { static void connect();
 		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioC0::Sdnwe only connects to Fmc!");
-	};
-	template< Peripheral peripheral >
-	struct UlpiStp { static void connect();
-		static_assert(
-			(peripheral == Peripheral::UsbOtgHs),
-			"GpioC0::UlpiStp only connects to UsbOtgHs!");
+			(peripheral == Peripheral::Usbotghs),
+			"GpioC0::Ulpistp only connects to Usbotghs!");
 	};
 	/// @endcond
 private:
@@ -264,22 +256,10 @@ template<>
 constexpr int8_t
 GpioC0::AdcChannel<Peripheral::Adc3> = 10;
 template<>
-struct GpioC0::Sdnwe<Peripheral::Fmc>
+struct GpioC0::Ulpistp<Peripheral::Usbotghs>
 {
 	using Gpio = GpioC0;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::Sdnwe;
-	static constexpr int af = 12;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(12);
-	}
-};
-template<>
-struct GpioC0::UlpiStp<Peripheral::UsbOtgHs>
-{
-	using Gpio = GpioC0;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::UlpiStp;
+	static constexpr Gpio::Signal Signal = Gpio::Signal::Ulpistp;
 	static constexpr int af = 10;
 	inline static void
 	connect()

@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOG->ODR & mask); }
 	// stop documentation inherited
@@ -163,7 +163,7 @@ public:
 	/// @{
 	/// Connect to any software peripheral
 	using BitBang = GpioSignal;
-	/// Connect to Fmc
+	/// Connect to Fsmc
 	using A12 = GpioSignal;
 	/// @}
 #endif
@@ -177,8 +177,8 @@ public:
 	template< Peripheral peripheral >
 	struct A12 { static void connect();
 		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioG2::A12 only connects to Fmc!");
+			(peripheral == Peripheral::Fsmc),
+			"GpioG2::A12 only connects to Fsmc!");
 	};
 	/// @endcond
 private:
@@ -198,7 +198,7 @@ struct GpioG2::BitBang<Peripheral::BitBang>
 	inline static void connect() {}
 };
 template<>
-struct GpioG2::A12<Peripheral::Fmc>
+struct GpioG2::A12<Peripheral::Fsmc>
 {
 	using Gpio = GpioG2;
 	static constexpr Gpio::Signal Signal = Gpio::Signal::A12;

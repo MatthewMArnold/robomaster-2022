@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOG->ODR & mask); }
 	// stop documentation inherited
@@ -163,12 +163,10 @@ public:
 	/// @{
 	/// Connect to any software peripheral
 	using BitBang = GpioSignal;
-	/// Connect to Dcmi
-	using D3 = GpioSignal;
-	/// Connect to Fmc
+	/// Connect to Fsmc
 	using Nce42 = GpioSignal;
 	/// Connect to Eth
-	using TxEn = GpioSignal;
+	using Txen = GpioSignal;
 	/// @}
 #endif
 	/// @cond
@@ -179,22 +177,16 @@ public:
 			"GpioG11::BitBang only connects to software drivers!");
 	};
 	template< Peripheral peripheral >
-	struct D3 { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Dcmi),
-			"GpioG11::D3 only connects to Dcmi!");
-	};
-	template< Peripheral peripheral >
 	struct Nce42 { static void connect();
 		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioG11::Nce42 only connects to Fmc!");
+			(peripheral == Peripheral::Fsmc),
+			"GpioG11::Nce42 only connects to Fsmc!");
 	};
 	template< Peripheral peripheral >
-	struct TxEn { static void connect();
+	struct Txen { static void connect();
 		static_assert(
 			(peripheral == Peripheral::Eth),
-			"GpioG11::TxEn only connects to Eth!");
+			"GpioG11::Txen only connects to Eth!");
 	};
 	/// @endcond
 private:
@@ -214,19 +206,7 @@ struct GpioG11::BitBang<Peripheral::BitBang>
 	inline static void connect() {}
 };
 template<>
-struct GpioG11::D3<Peripheral::Dcmi>
-{
-	using Gpio = GpioG11;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::D3;
-	static constexpr int af = 13;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(13);
-	}
-};
-template<>
-struct GpioG11::Nce42<Peripheral::Fmc>
+struct GpioG11::Nce42<Peripheral::Fsmc>
 {
 	using Gpio = GpioG11;
 	static constexpr Gpio::Signal Signal = Gpio::Signal::Nce42;
@@ -238,10 +218,10 @@ struct GpioG11::Nce42<Peripheral::Fmc>
 	}
 };
 template<>
-struct GpioG11::TxEn<Peripheral::Eth>
+struct GpioG11::Txen<Peripheral::Eth>
 {
 	using Gpio = GpioG11;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::TxEn;
+	static constexpr Gpio::Signal Signal = Gpio::Signal::Txen;
 	static constexpr int af = 11;
 	inline static void
 	connect()

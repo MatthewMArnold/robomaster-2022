@@ -25,7 +25,7 @@
 #include "tap/motor/motorsim/sim_handler.hpp"
 #endif
 
-#include "tap/rm-dev-board-a/board.hpp"
+#include "tap/board/board.hpp"
 
 #include "modm/architecture/interface/delay.hpp"
 
@@ -85,8 +85,6 @@ int main()
 
         if (sendMotorTimeout.execute())
         {
-            PROFILE(drivers->profiler, drivers->mpu6500.calcIMUAngles, ());
-            PROFILE(drivers->profiler, drivers->errorController.updateLedDisplay, ());
             PROFILE(drivers->profiler, drivers->commandScheduler.run, ());
             PROFILE(drivers->profiler, drivers->djiMotorTxHandler.processCanSendData, ());
             PROFILE(drivers->profiler, drivers->terminalSerial.update, ());
@@ -105,7 +103,6 @@ static void initializeIo(tap::Drivers *drivers)
     drivers->can.initialize();
     drivers->errorController.init();
     drivers->remote.initialize();
-    drivers->mpu6500.init();
     drivers->refSerial.initialize();
     drivers->terminalSerial.initialize();
     drivers->schedulerTerminalHandler.init();
@@ -121,5 +118,4 @@ static void updateIo(tap::Drivers *drivers)
     drivers->canRxHandler.pollCanData();
     drivers->refSerial.updateSerial();
     drivers->remote.read();
-    drivers->mpu6500.read();
 }
