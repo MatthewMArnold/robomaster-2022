@@ -19,7 +19,7 @@
 
 #include "digital.hpp"
 
-#include "tap/rm-dev-board-a/board.hpp"
+#include "tap/board/board.hpp"
 
 using namespace Board;
 
@@ -43,20 +43,14 @@ void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMo
 #ifndef PLATFORM_HOSTED
     switch (pin)
     {
-        case Digital::InputPin::A:
-            DigitalInPinA::configure(mode);
+        case Digital::InputPin::PF1:
+            DigitalInPinPF1::configure(mode);
             break;
-
-        case Digital::InputPin::B:
-            DigitalInPinB::configure(mode);
+        case Digital::InputPin::PF0:
+            DigitalInPinPF0::configure(mode);
             break;
-
-        case Digital::InputPin::C:
-            DigitalInPinC::configure(mode);
-            break;
-
-        case Digital::InputPin::D:
-            DigitalInPinD::configure(mode);
+        case Digital::InputPin::B12:
+            DigitalInPinB12::configure(mode);
             break;
     }
 #endif
@@ -67,20 +61,17 @@ void Digital::set(Digital::OutputPin pin, bool isSet)
 #ifndef PLATFORM_HOSTED
     switch (pin)
     {
-        case Digital::OutputPin::E:
-            DigitalOutPinE::set(isSet);
+        case Digital::OutputPin::B13:
+            DigitalOutPinB13::set(isSet);
             break;
-
-        case Digital::OutputPin::F:
-            DigitalOutPinF::set(isSet);
+        case Digital::OutputPin::B14:
+            DigitalOutPinB14::set(isSet);
             break;
-
-        case Digital::OutputPin::G:
-            DigitalOutPinG::set(isSet);
+        case Digital::OutputPin::B15:
+            DigitalOutPinB15::set(isSet);
             break;
-
-        case Digital::OutputPin::H:
-            DigitalOutPinH::set(isSet);
+        case Digital::OutputPin::Laser:
+            DigitalOutPinLaser::set(isSet);
             break;
     }
 #endif
@@ -93,17 +84,14 @@ bool Digital::read(Digital::InputPin pin) const
 #else
     switch (pin)
     {
-        case Digital::InputPin::A:
-            return DigitalInPinA::read();
-
-        case Digital::InputPin::B:
-            return DigitalInPinB::read();
-
-        case Digital::InputPin::C:
-            return DigitalInPinC::read();
-
-        case Digital::InputPin::D:
-            return DigitalInPinD::read();
+        case Digital::InputPin::PF1:
+            return DigitalInPinPF1::read();
+        case Digital::InputPin::PF0:
+            return DigitalInPinPF0::read();
+        case Digital::InputPin::B12:
+            return DigitalInPinB12::read();
+        default:
+            return false;
     }
 #endif
 }

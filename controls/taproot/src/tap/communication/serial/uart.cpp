@@ -19,7 +19,7 @@
 
 #include "uart.hpp"
 
-#include "tap/rm-dev-board-a/board.hpp"
+#include "tap/board/board.hpp"
 
 using namespace Board;
 
@@ -36,8 +36,6 @@ bool Uart::read(UartPort port, uint8_t *data)
     {
         case UartPort::Uart1:
             return Usart1::read(*data);
-        case UartPort::Uart2:
-            return Usart2::read(*data);
         case UartPort::Uart3:
             return Usart3::read(*data);
         case UartPort::Uart6:
@@ -57,8 +55,6 @@ std::size_t Uart::read(UartPort port, uint8_t *data, std::size_t length)
     {
         case UartPort::Uart1:
             return Usart1::read(data, length);
-        case UartPort::Uart2:
-            return Usart2::read(data, length);
         case UartPort::Uart3:
             return Usart3::read(data, length);
         case UartPort::Uart6:
@@ -78,8 +74,6 @@ std::size_t Uart::discardReceiveBuffer(UartPort port)
     {
         case UartPort::Uart1:
             return Usart1::discardReceiveBuffer();
-        case UartPort::Uart2:
-            return Usart2::discardReceiveBuffer();
         case UartPort::Uart3:
             return Usart3::discardReceiveBuffer();
         case UartPort::Uart6:
@@ -99,8 +93,6 @@ bool Uart::write(UartPort port, uint8_t data)
     {
         case UartPort::Uart1:
             return Usart1::write(data);
-        case UartPort::Uart2:
-            return Usart2::write(data);
         case UartPort::Uart3:
             return Usart3::write(data);
         case UartPort::Uart6:
@@ -120,8 +112,6 @@ std::size_t Uart::write(UartPort port, const uint8_t *data, std::size_t length)
     {
         case UartPort::Uart1:
             return Usart1::write(data, length);
-        case UartPort::Uart2:
-            return Usart2::write(data, length);
         case UartPort::Uart3:
             return Usart3::write(data, length);
         case UartPort::Uart6:
@@ -141,8 +131,6 @@ bool Uart::isWriteFinished(UartPort port) const
     {
         case UartPort::Uart1:
             return Usart1::isWriteFinished();
-        case UartPort::Uart2:
-            return Usart2::isWriteFinished();
         case UartPort::Uart3:
             return Usart3::isWriteFinished();
         case UartPort::Uart6:
@@ -160,9 +148,6 @@ void Uart::flushWriteBuffer(UartPort port)
     {
         case UartPort::Uart1:
             Usart1::flushWriteBuffer();
-            break;
-        case UartPort::Uart2:
-            Usart2::flushWriteBuffer();
             break;
         case UartPort::Uart3:
             Usart3::flushWriteBuffer();

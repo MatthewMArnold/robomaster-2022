@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOI->ODR & mask); }
 	// stop documentation inherited
@@ -202,10 +202,11 @@ struct GpioI8::Af2<Peripheral::Rtc>
 {
 	using Gpio = GpioI8;
 	static constexpr Gpio::Signal Signal = Gpio::Signal::Af2;
-	static constexpr int af = -1;
+	static constexpr int af = 0;
 	inline static void
 	connect()
 	{
+		setAlternateFunction(0);
 	}
 };
 /// @endcond

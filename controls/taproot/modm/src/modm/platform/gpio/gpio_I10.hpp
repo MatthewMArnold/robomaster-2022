@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOI->ODR & mask); }
 	// stop documentation inherited
@@ -163,10 +163,8 @@ public:
 	/// @{
 	/// Connect to any software peripheral
 	using BitBang = GpioSignal;
-	/// Connect to Fmc
-	using D31 = GpioSignal;
 	/// Connect to Eth
-	using RxEr = GpioSignal;
+	using Rxer = GpioSignal;
 	/// @}
 #endif
 	/// @cond
@@ -177,16 +175,10 @@ public:
 			"GpioI10::BitBang only connects to software drivers!");
 	};
 	template< Peripheral peripheral >
-	struct D31 { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioI10::D31 only connects to Fmc!");
-	};
-	template< Peripheral peripheral >
-	struct RxEr { static void connect();
+	struct Rxer { static void connect();
 		static_assert(
 			(peripheral == Peripheral::Eth),
-			"GpioI10::RxEr only connects to Eth!");
+			"GpioI10::Rxer only connects to Eth!");
 	};
 	/// @endcond
 private:
@@ -206,22 +198,10 @@ struct GpioI10::BitBang<Peripheral::BitBang>
 	inline static void connect() {}
 };
 template<>
-struct GpioI10::D31<Peripheral::Fmc>
+struct GpioI10::Rxer<Peripheral::Eth>
 {
 	using Gpio = GpioI10;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::D31;
-	static constexpr int af = 12;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(12);
-	}
-};
-template<>
-struct GpioI10::RxEr<Peripheral::Eth>
-{
-	using Gpio = GpioI10;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::RxEr;
+	static constexpr Gpio::Signal Signal = Gpio::Signal::Rxer;
 	static constexpr int af = 11;
 	inline static void
 	connect()

@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOG->ODR & mask); }
 	// stop documentation inherited
@@ -163,14 +163,10 @@ public:
 	/// @{
 	/// Connect to any software peripheral
 	using BitBang = GpioSignal;
-	/// Connect to Spi6
-	using Nss = GpioSignal;
 	/// Connect to Eth
-	using PpsOut = GpioSignal;
+	using Ppsout = GpioSignal;
 	/// Connect to Usart6
 	using Rts = GpioSignal;
-	/// Connect to Fmc
-	using Sdclk = GpioSignal;
 	/// @}
 #endif
 	/// @cond
@@ -181,28 +177,16 @@ public:
 			"GpioG8::BitBang only connects to software drivers!");
 	};
 	template< Peripheral peripheral >
-	struct Nss { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Spi6),
-			"GpioG8::Nss only connects to Spi6!");
-	};
-	template< Peripheral peripheral >
-	struct PpsOut { static void connect();
+	struct Ppsout { static void connect();
 		static_assert(
 			(peripheral == Peripheral::Eth),
-			"GpioG8::PpsOut only connects to Eth!");
+			"GpioG8::Ppsout only connects to Eth!");
 	};
 	template< Peripheral peripheral >
 	struct Rts { static void connect();
 		static_assert(
 			(peripheral == Peripheral::Usart6),
 			"GpioG8::Rts only connects to Usart6!");
-	};
-	template< Peripheral peripheral >
-	struct Sdclk { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioG8::Sdclk only connects to Fmc!");
 	};
 	/// @endcond
 private:
@@ -222,22 +206,10 @@ struct GpioG8::BitBang<Peripheral::BitBang>
 	inline static void connect() {}
 };
 template<>
-struct GpioG8::Nss<Peripheral::Spi6>
+struct GpioG8::Ppsout<Peripheral::Eth>
 {
 	using Gpio = GpioG8;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::Nss;
-	static constexpr int af = 5;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(5);
-	}
-};
-template<>
-struct GpioG8::PpsOut<Peripheral::Eth>
-{
-	using Gpio = GpioG8;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::PpsOut;
+	static constexpr Gpio::Signal Signal = Gpio::Signal::Ppsout;
 	static constexpr int af = 11;
 	inline static void
 	connect()
@@ -255,18 +227,6 @@ struct GpioG8::Rts<Peripheral::Usart6>
 	connect()
 	{
 		setAlternateFunction(8);
-	}
-};
-template<>
-struct GpioG8::Sdclk<Peripheral::Fmc>
-{
-	using Gpio = GpioG8;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::Sdclk;
-	static constexpr int af = 12;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(12);
 	}
 };
 /// @endcond

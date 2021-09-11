@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOH->ODR & mask); }
 	// stop documentation inherited
@@ -165,8 +165,6 @@ public:
 	using BitBang = GpioSignal;
 	/// Connect to Eth
 	using Col = GpioSignal;
-	/// Connect to Fmc
-	using Sdne0 = GpioSignal;
 	/// @}
 #endif
 	/// @cond
@@ -181,12 +179,6 @@ public:
 		static_assert(
 			(peripheral == Peripheral::Eth),
 			"GpioH3::Col only connects to Eth!");
-	};
-	template< Peripheral peripheral >
-	struct Sdne0 { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioH3::Sdne0 only connects to Fmc!");
 	};
 	/// @endcond
 private:
@@ -215,18 +207,6 @@ struct GpioH3::Col<Peripheral::Eth>
 	connect()
 	{
 		setAlternateFunction(11);
-	}
-};
-template<>
-struct GpioH3::Sdne0<Peripheral::Fmc>
-{
-	using Gpio = GpioH3;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::Sdne0;
-	static constexpr int af = 12;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(12);
 	}
 };
 /// @endcond

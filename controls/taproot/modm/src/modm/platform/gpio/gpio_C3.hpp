@@ -78,9 +78,9 @@ public:
 	inline static void set() { PinSet::set(); }
 	inline static void set(bool status) { PinSet::set(status); }
 	inline static void reset() { PinSet::reset(); }
-	inline static void toggle() {
-		if (isSet()) { reset(); }
-		else         { set();   }
+	inline static bool toggle() {
+		if (isSet()) { reset(); return true; }
+		else         { set();   return false; }
 	}
 	inline static bool isSet() { return (GPIOC->ODR & mask); }
 	// stop documentation inherited
@@ -169,12 +169,10 @@ public:
 	using Mosi = GpioSignal;
 	/// Connect to I2s2
 	using Sd = GpioSignal;
-	/// Connect to Fmc
-	using Sdcke0 = GpioSignal;
 	/// Connect to Eth
-	using TxClk = GpioSignal;
-	/// Connect to UsbOtgHs
-	using UlpiNxt = GpioSignal;
+	using Txclk = GpioSignal;
+	/// Connect to Usbotghs
+	using Ulpinxt = GpioSignal;
 	/// @}
 #endif
 	/// @cond
@@ -205,22 +203,16 @@ public:
 			"GpioC3::Sd only connects to I2s2!");
 	};
 	template< Peripheral peripheral >
-	struct Sdcke0 { static void connect();
-		static_assert(
-			(peripheral == Peripheral::Fmc),
-			"GpioC3::Sdcke0 only connects to Fmc!");
-	};
-	template< Peripheral peripheral >
-	struct TxClk { static void connect();
+	struct Txclk { static void connect();
 		static_assert(
 			(peripheral == Peripheral::Eth),
-			"GpioC3::TxClk only connects to Eth!");
+			"GpioC3::Txclk only connects to Eth!");
 	};
 	template< Peripheral peripheral >
-	struct UlpiNxt { static void connect();
+	struct Ulpinxt { static void connect();
 		static_assert(
-			(peripheral == Peripheral::UsbOtgHs),
-			"GpioC3::UlpiNxt only connects to UsbOtgHs!");
+			(peripheral == Peripheral::Usbotghs),
+			"GpioC3::Ulpinxt only connects to Usbotghs!");
 	};
 	/// @endcond
 private:
@@ -312,22 +304,10 @@ struct GpioC3::Sd<Peripheral::I2s2>
 	}
 };
 template<>
-struct GpioC3::Sdcke0<Peripheral::Fmc>
+struct GpioC3::Txclk<Peripheral::Eth>
 {
 	using Gpio = GpioC3;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::Sdcke0;
-	static constexpr int af = 12;
-	inline static void
-	connect()
-	{
-		setAlternateFunction(12);
-	}
-};
-template<>
-struct GpioC3::TxClk<Peripheral::Eth>
-{
-	using Gpio = GpioC3;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::TxClk;
+	static constexpr Gpio::Signal Signal = Gpio::Signal::Txclk;
 	static constexpr int af = 11;
 	inline static void
 	connect()
@@ -336,10 +316,10 @@ struct GpioC3::TxClk<Peripheral::Eth>
 	}
 };
 template<>
-struct GpioC3::UlpiNxt<Peripheral::UsbOtgHs>
+struct GpioC3::Ulpinxt<Peripheral::Usbotghs>
 {
 	using Gpio = GpioC3;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::UlpiNxt;
+	static constexpr Gpio::Signal Signal = Gpio::Signal::Ulpinxt;
 	static constexpr int af = 10;
 	inline static void
 	connect()
