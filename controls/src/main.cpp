@@ -78,10 +78,20 @@ int main()
     tap::communication::TCPServer::MainServer()->getConnection();
 #endif
 
+<<<<<<< HEAD
     // tap::motor::DjiMotor motor1(drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS1, 0, "name1");
     // motor1.setDesiredOutput(10);
 
     drivers->pwm.write(.5f, tap::gpio::Pwm::C1);
+=======
+    tap::motor::DjiMotor motor1(drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS1, 0, "name1");
+    motor1.setDesiredOutput(10);
+
+    while (1)
+    {
+        // do this as fast as you can
+        PROFILE(drivers->profiler, updateIo, (drivers));
+>>>>>>> 9816cfac76d3a88aefff28478dd3b561b024c33f
 
     tap::motor::DjiMotor motor(drivers, tap::motor::MOTOR3, tap::can::CanBus::CAN_BUS1, false, "cool motor");
     motor.initialize();
