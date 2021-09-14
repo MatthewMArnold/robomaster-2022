@@ -78,21 +78,39 @@ int main()
     tap::communication::TCPServer::MainServer()->getConnection();
 #endif
 
-    tap::motor::DjiMotor motor1(drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS1, 0, "name1");
-    motor1.setDesiredOutput(10);
+    // tap::motor::DjiMotor motor1(drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS1, 0, "name1");
+    // motor1.setDesiredOutput(10);
+
+    drivers->pwm.write(.5f, tap::gpio::Pwm::C1);
+
+    tap::motor::DjiMotor motor(drivers, tap::motor::MOTOR3, tap::can::CanBus::CAN_BUS1, false, "cool motor");
+    motor.initialize();
+    motor.setDesiredOutput(5000);
 
     while (1)
-    {
-        // do this as fast as you can
-        PROFILE(drivers->profiler, updateIo, (drivers));
-
+    {   
         if (sendMotorTimeout.execute())
         {
-            PROFILE(drivers->profiler, drivers->commandScheduler.run, ());
-            PROFILE(drivers->profiler, drivers->djiMotorTxHandler.processCanSendData, ());
-            PROFILE(drivers->profiler, drivers->terminalSerial.update, ());
+            drivers->djiMotorTxHandler.processCanSendData();
         }
+        drivers->canRxHandler.pollCanData();
         modm::delay_us(10);
+        // drivers->leds.set(tap::gpio::Leds::Red, true);
+        // drivers->leds.set(tap::gpio::Leds::Green, true);
+        // do this as fast as you can
+        // PROFILE(drivers->profiler, updateIo, (drivers));
+
+        // if (sendMotorTimeout.execute())
+        // {
+        //     PROFILE(drivers->profiler, drivers->commandScheduler.run, ());
+        //     PROFILE(drivers->profiler, drivers->djiMotorTxHandler.processCanSendData, ());
+        //     PROFILE(drivers->profiler, drivers->terminalSerial.update, ());
+        // }
+        // modm::delay_us(100);
+        // modm::delay_ms(500);
+        // drivers->leds.set(tap::gpio::Leds::Red, false);
+        // drivers->leds.set(tap::gpio::Leds::Green, false);
+        // modm::delay_ms(500);
     }
     return 0;
 }
