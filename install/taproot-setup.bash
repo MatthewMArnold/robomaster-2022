@@ -52,5 +52,8 @@ cd ${DIR}/..
 echo -e "\n\tInitializing submodules...\n"
 git submodule update --init --recursive
 
+git remote add template https://gitlab.com/aruw/controls/taproot-template-project.git
+git pull template develop
+git push --set-upstream origin master
 echo -e "\nSetup Finished!"
 
