@@ -1,0 +1,16 @@
+git
+gcc
+make
+scons
+cmake
+openocd
+avrdude
+gcc-avr
+doxygen
+python3
+avr-libc
+python3-pip
+binutils-avr
+build-essential
+libusb-1.0-0-dev
+libboost-all-dev

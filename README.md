@@ -12,6 +12,8 @@ TODO - Pipeline Setup
 
 ## New user guide
 
+### Setting up a development environment
+
 To develop software for the simulator or unit test environment, a Debian Linux development
 environment is necessary. When developing software for the development board, Linux, Windows, or Mac
 OS operating systems all work. We recommend working in a Debian Linux environment so you can both
@@ -32,6 +34,20 @@ machine and deploying to the development board or have not been rigorously teste
 
 Sometimes setting up your machine can be tricky. If you are having trouble setting up your
 environment properly, feel free to ask for help on our [Discord server](https://discord.gg/jjDrGhrjMy).
+
+### Cloning the repo
+
+If you use the Docker container, or have already cloned the repository yourself, you should run:
+
+```
+git submodule update --init --recursive
+```
+
+Otherwise, you should clone your repo in the target development environment as follows:
+
+```
+git clone --recursive https://gitlab.com/my-team/my-amazing-project.git
+```
 
 ## Workflow guide
 
