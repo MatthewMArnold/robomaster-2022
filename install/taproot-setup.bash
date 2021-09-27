@@ -12,7 +12,7 @@ pip3 install -r python3_requirements.txt
 
 echo -e "\n\tExtracting gcc...\n"
 
-tar -xvf ${HOME}/Downloads/gcc-arm-none-eabi-10-2020-q4-update-x86_64-linux.tar.bz2 -C ~/
+tar -xvf ${HOME}/Downloads/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C ~/
 
 echo -e "\n\tStaching Cheats...\n"
 echo "export PATH=${HOME}/gcc-arm-none-eabi-10-2020-q4-major/bin:${HOME}/.local/bin:${PATH}" >> ${HOME}/.bashrc
